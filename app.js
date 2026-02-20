@@ -8,6 +8,12 @@ function WeatherApp(apiKey) {
     this.searchBtn = document.getElementById('search-btn');
     this.cityInput = document.getElementById('city-input');
     this.weatherDisplay = document.getElementById('weather-display');
+    this.recentSearchesSection = document.getElementById('recent-searches-section');
+    this.recentSearchesContainer = document.getElementById('recent-searches-container');
+    this.clearHistoryBtn = document.getElementById('clear-history-btn');
+
+    this.recentSearches = [];
+    this.maxRecentSearches = 5;
 
     this.init();
 }
@@ -20,18 +26,115 @@ WeatherApp.prototype.init = function() {
         }
     }.bind(this));
 
-    this.showWelcome();
+    if (this.clearHistoryBtn) {
+        this.clearHistoryBtn.addEventListener('click', this.clearHistory.bind(this));
+    }
+
+    this.loadRecentSearches();
+    this.loadLastCity();
 };
 
 WeatherApp.prototype.showWelcome = function() {
     const welcomeHTML = `
         <div class="welcome-message">
             <h3>🌤️ Welcome to SkyFetch</h3>
-            <p>Enter a city name to see current weather and a 5-day forecast.</p>
+            <p>Search for any city to see current weather and a 5-day forecast.</p>
+            <p>Try: London, Paris, Tokyo, New York</p>
         </div>
     `;
 
     this.weatherDisplay.innerHTML = welcomeHTML;
+};
+
+WeatherApp.prototype.loadRecentSearches = function() {
+    const saved = localStorage.getItem('recentSearches');
+
+    if (saved) {
+        try {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed)) {
+                this.recentSearches = parsed;
+            }
+        } catch (error) {
+            this.recentSearches = [];
+        }
+    }
+
+    this.displayRecentSearches();
+};
+
+WeatherApp.prototype.toTitleCase = function(city) {
+    return city
+        .split(' ')
+        .filter(function(part) {
+            return part.trim().length > 0;
+        })
+        .map(function(part) {
+            return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
+        })
+        .join(' ');
+};
+
+WeatherApp.prototype.saveRecentSearch = function(city) {
+    const cityName = this.toTitleCase(city);
+    const existingIndex = this.recentSearches.indexOf(cityName);
+
+    if (existingIndex > -1) {
+        this.recentSearches.splice(existingIndex, 1);
+    }
+
+    this.recentSearches.unshift(cityName);
+
+    if (this.recentSearches.length > this.maxRecentSearches) {
+        this.recentSearches.pop();
+    }
+
+    localStorage.setItem('recentSearches', JSON.stringify(this.recentSearches));
+    this.displayRecentSearches();
+};
+
+WeatherApp.prototype.displayRecentSearches = function() {
+    this.recentSearchesContainer.innerHTML = '';
+
+    if (this.recentSearches.length === 0) {
+        this.recentSearchesSection.style.display = 'none';
+        return;
+    }
+
+    this.recentSearchesSection.style.display = 'block';
+
+    this.recentSearches.forEach(function(city) {
+        const button = document.createElement('button');
+        button.className = 'recent-search-btn';
+        button.textContent = city;
+
+        button.addEventListener('click', function() {
+            this.cityInput.value = city;
+            this.getWeather(city);
+            this.cityInput.value = '';
+        }.bind(this));
+
+        this.recentSearchesContainer.appendChild(button);
+    }.bind(this));
+};
+
+WeatherApp.prototype.loadLastCity = function() {
+    const lastCity = localStorage.getItem('lastCity');
+
+    if (lastCity) {
+        this.getWeather(lastCity);
+    } else {
+        this.showWelcome();
+    }
+};
+
+WeatherApp.prototype.clearHistory = function() {
+    if (confirm('Clear all recent searches?')) {
+        this.recentSearches = [];
+        localStorage.removeItem('recentSearches');
+        this.displayRecentSearches();
+        this.cityInput.focus();
+    }
 };
 
 WeatherApp.prototype.handleSearch = function() {
@@ -104,6 +207,8 @@ WeatherApp.prototype.getWeather = async function(city) {
         console.log('Weather Data:', currentWeather.data);
         this.displayWeather(currentWeather.data);
         this.displayForecast(forecastData);
+        this.saveRecentSearch(currentWeather.data.name);
+        localStorage.setItem('lastCity', currentWeather.data.name);
     } catch (error) {
         console.error('Error:', error);
         if (error.response && error.response.status === 404) {
@@ -113,7 +218,7 @@ WeatherApp.prototype.getWeather = async function(city) {
         }
     } finally {
         this.searchBtn.disabled = false;
-        this.searchBtn.textContent = 'Search';
+        this.searchBtn.textContent = '🔍 Search';
     }
 };
 
