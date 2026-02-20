@@ -20,7 +20,7 @@ body {
     border-radius: 20px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     text-align: center;
-    max-width: 500px;
+    max-width: 880px;
     width: 100%;
 }
 
@@ -190,4 +190,75 @@ h1 {
 .weather-icon {
     width: 100px;
     height: 100px;
+}
+
+.forecast-section {
+    margin-top: 30px;
+    padding-top: 30px;
+    border-top: 2px solid #eee;
+}
+
+.forecast-title {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.forecast-container {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(120px, 1fr));
+    gap: 15px;
+}
+
+.forecast-card {
+    background: linear-gradient(135deg, #f7f9ff 0%, #eef1ff 100%);
+    border-radius: 15px;
+    padding: 18px 12px;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.forecast-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 26px rgba(102, 126, 234, 0.25);
+}
+
+.forecast-day {
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.forecast-temp {
+    font-size: 1.5rem;
+    color: #667eea;
+    font-weight: 700;
+    margin: 8px 0;
+}
+
+.forecast-desc {
+    font-size: 0.9rem;
+    color: #666;
+    text-transform: capitalize;
+}
+
+.forecast-icon {
+    width: 60px;
+    height: 60px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 24px;
+    }
+
+    .forecast-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .forecast-card {
+        padding: 15px 10px;
+    }
 }
