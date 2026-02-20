@@ -43,6 +43,70 @@ h1 {
     align-items: center;
 }
 
+.recent-searches-section {
+    margin: 20px 0;
+    display: none;
+}
+
+.recent-searches-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.recent-searches-header h4 {
+    font-size: 1rem;
+    color: #666;
+    text-align: left;
+}
+
+#recent-searches-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-start;
+}
+
+.recent-search-btn {
+    padding: 8px 16px;
+    background: #f0f3ff;
+    border: 1px solid #d9dfff;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #505b91;
+    transition: all 0.2s ease;
+}
+
+.recent-search-btn:hover {
+    background: #667eea;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(102, 126, 234, 0.25);
+}
+
+.recent-search-btn:active {
+    transform: scale(0.95);
+}
+
+.clear-history-btn {
+    font-size: 0.8rem;
+    padding: 5px 10px;
+    background: transparent;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    color: #777;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.clear-history-btn:hover {
+    border-color: #e74c3c;
+    color: #e74c3c;
+    background: #fff3f2;
+}
+
 #city-input {
     flex: 1;
     padding: 12px 20px;
